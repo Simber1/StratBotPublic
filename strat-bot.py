@@ -6,7 +6,7 @@ user = []
 voices = []
 
 stratsFile = open("strat-source.tsv")
-token = open("token.txt")
+token = open("token.txt","r").readline()
 
 stratDatabase = [line.split('\t')[:4] for line in stratsFile.readlines()]
 
@@ -151,4 +151,5 @@ def killhouse(message):
 	return False
 
 
-client.run(token)
+
+client.run(token.strip())
