@@ -1,6 +1,8 @@
 import discord
 import random
 
+print(discord.version_info)
+
 client = discord.Client()
 user = []
 voices = []
@@ -31,7 +33,6 @@ async def on_message(message):
 
 	if message.content.startswith("!strat"): #Checking if strat
 		validNum = False
-
 		if attacker(messageStr):   #Checking if Attacker
 			if cstore(messageStr):
 				while validNum == False:
@@ -77,8 +78,8 @@ async def on_message(message):
 				await message.channel.send(embed=post(validNum)) #Defender Killhouse
 				return
 
-	validNum = randomGen("Both","All")
-	await message.channel.send(embed=post(validNum))
+		validNum = randomGen("Both","All")
+		await message.channel.send(embed=post(validNum))
 
 
 
