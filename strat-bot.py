@@ -98,14 +98,11 @@ def randomGen(team,tileset):
 		return num
 
 	if (not "Both" in stratDatabase[num][2]) and (not team in stratDatabase[num][2]):
-		print(num)
-		print("Failed Team")
 		return False
 
-	if (not "All" in stratDatabase[num][3]) and (not tileset not in stratDatabase[num][3]):
-		print(num)
-		print("Failed map")
+	if (not "All" in stratDatabase[num][3]) and (not tileset in stratDatabase[num][3]):
 		return False
+	print(stratDatabase[num][3])
 	return num
 
 
@@ -116,7 +113,7 @@ def randomGen(team,tileset):
 
 def post(number):
 	embed = discord.Embed(title="Title", description=stratDatabase[number][0], color=0x04ddfe)
-	embed.add_field(name="Desc", value=stratDatabase[number][1], inline=False)
+	embed.add_field(name="Description", value=stratDatabase[number][1], inline=False)
 	embed.add_field(name="Team", value=stratDatabase[number][2], inline=False)
 	embed.add_field(name="TileSet", value=stratDatabase[number][3], inline=False)
 	return embed
