@@ -102,7 +102,7 @@ def randomGen(team,tileset):
 
 	if (not "All" in stratDatabase[num][3]) and (not tileset in stratDatabase[num][3]):
 		return False
-	print(stratDatabase[num][3])
+	
 	return num
 
 
