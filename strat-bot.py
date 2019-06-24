@@ -27,9 +27,6 @@ async def on_message(message):
 	if message.author == client.user:
 		return
 
-	if message.content.startswith("!quit"):
-		await message.channel.send("Quiting!")
-		exit()
 
 	if message.content.startswith("!strat"): #Checking if strat
 		validNum = False
@@ -38,12 +35,14 @@ async def on_message(message):
 				while validNum == False:
 					validNum = randomGen("Attackers","C-Store")
 				await message.channel.send(embed=post(validNum)) #Attacker CS
+				print("att cs")
 				return
 
 			if factory(messageStr):
 				while validNum == False:
 					validNum = randomGen("Attackers","Factory")        		
 				await message.channel.send(embed=post(validNum)) #Attacker Factory
+				print("att fac")
 				return
 
 			if killhouse(messageStr):
@@ -51,6 +50,7 @@ async def on_message(message):
 					validNum = randomGen("Attackers","Killhouse")
 
 				await message.channel.send(embed=post(validNum)) #Attacker Killhouse
+				print("att kh")
 				return
 
 
@@ -61,6 +61,7 @@ async def on_message(message):
 					validNum = randomGen("Defenders","C-store")
 				
 				await message.channel.send(embed=post(validNum)) #Defender CS
+				print("def cs")
 				return
 
 			if factory(messageStr):
@@ -68,6 +69,7 @@ async def on_message(message):
 					validNum = randomGen("Defenders","Factory")
 
 				await message.channel.send(embed=post(validNum)) #Defender Factory
+				print("def fac")
 				return
 
 			if killhouse(messageStr):
@@ -76,15 +78,17 @@ async def on_message(message):
 					validNum = randomGen("Defenders","Killhouse")
 					
 				await message.channel.send(embed=post(validNum)) #Defender Killhouse
+				print("def kh")
 				return
 
 		validNum = randomGen("Both","All")
 		await message.channel.send(embed=post(validNum))
+		print("general")
 
 
 
-	if message.content.startswith("!list"):
-		await message.channel.send(stratDatabase[0][1])
+	if message.content.startswith("!help"):
+		await message.channel.send("`!strat [team] [tile set]`. \n You can do just `!strat` for a general strat, or specify both a team and a tileset which can give you a strat for the map or the team.")
 		
 
 
