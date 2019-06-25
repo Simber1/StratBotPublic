@@ -1,5 +1,7 @@
 import discord
 import random
+from gsheet import Sheet
+import datetime
 
 print(discord.version_info)
 
@@ -7,11 +9,24 @@ client = discord.Client()
 user = []
 voices = []
 
-stratsFile = open("strat-source.tsv")
 token = open("token.txt","r").readline()
 
-stratDatabase = [line.split('\t')[:4] for line in stratsFile.readlines()]
+UPDATE_RATE=30 #Minutes between updates
 
+sheet = Sheet()
+stratDatabase = sheet.get_table()
+
+
+last_update = datetime.datetime.now()
+def update_if_needed(database):
+	global last_update
+	now = datetime.datetime.now()
+	if (now - last_update).total_seconds() > UPDATE_RATE*60:
+		print("Updating database")
+		last_update = now
+		return sheet.get_table()
+	else:
+		return database 
 
 
 @client.event
@@ -20,7 +35,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-
+	global stratDatabase
 	messageStr = message.content
 	messageStr = messageStr.lower()
 
@@ -29,6 +44,7 @@ async def on_message(message):
 
 
 	if message.content.startswith("!strat"): #Checking if strat
+		stratDatabase = update_if_needed(stratDatabase)
 		validNum = False
 		if attacker(messageStr):   #Checking if Attacker
 			if cstore(messageStr):
@@ -93,7 +109,7 @@ async def on_message(message):
 
 
 def randomGen(team,tileset):
-	num = random.randint(1,len(stratDatabase))
+	num = random.randint(0,len(stratDatabase))
 	if team == "Both":
 		return num
 
@@ -151,7 +167,6 @@ def killhouse(message):
 	if "kh" in message:
 		return True
 	return False
-
 
 
 client.run(token.strip())
