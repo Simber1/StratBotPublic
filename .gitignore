@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 token.txt
 strat-source.tsv
+StratRouletteKey.json
