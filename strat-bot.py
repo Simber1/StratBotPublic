@@ -172,7 +172,7 @@ def randomGen(team,tileset):
 	#return number
 
 def post(number):
-	embed = discord.Embed(title="Title (GDOCS)", description=stratDatabase[number][0], color=0x04ddfe)
+	embed = discord.Embed(title="Title", description=stratDatabase[number][0], color=0x04ddfe)
 	embed.add_field(name="Description", value=stratDatabase[number][1], inline=False)
 	embed.add_field(name="Team", value=stratDatabase[number][2], inline=False)
 	embed.add_field(name="TileSet", value=stratDatabase[number][3], inline=False)
