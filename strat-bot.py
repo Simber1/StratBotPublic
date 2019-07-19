@@ -9,7 +9,7 @@ print(discord.version_info)
 token = open("token.txt","r").readline()
 #This should work? If not, idk
 client = commands.Bot(command_prefix='!', case_insensitive=True, description='memer strat bot.')
-bot.remove_command('help')
+client.remove_command('help')
 
 UPDATE_RATE=30 #Minutes between updates
 
@@ -36,7 +36,7 @@ async def on_ready():
 #Let this command be run by people with the Testers role only.	
 @client.command()
 @commands.has_role('Testers')
-async def strat(ctx, ,*args):
+async def strat(ctx,*args):
 	#Not sure why this is global but I kept it because who knows.
 	global stratDatabase
 	stratDatabase = update_if_needed(stratDatabase)
@@ -51,7 +51,7 @@ async def strat(ctx, ,*args):
 	#No arguments provided. Default to random.
 	if len(args) == 0:
 		validNum = randomGen("Both","All")
-		await ctx.message.send(embed=post(validNum))
+		await ctx.send(embed=post(validNum))
 		return
 	
 	#One argument provided, check to see if it's a tile
