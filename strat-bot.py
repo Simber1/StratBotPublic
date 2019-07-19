@@ -1,15 +1,15 @@
 import discord
+from discord.ext import commands
 import random
 from gsheet import Sheet
 import datetime
+# import asyncio
 
 print(discord.version_info)
-
-client = discord.Client()
-user = []
-voices = []
-
 token = open("token.txt","r").readline()
+#This should work? If not, idk
+client = commands.Bot(command_prefix='!', case_insensitive=True, description='memer strat bot.')
+bot.remove_command('help')
 
 UPDATE_RATE=30 #Minutes between updates
 
@@ -33,79 +33,123 @@ def update_if_needed(database):
 async def on_ready():
 	print("We have logged in as {0.user}".format(client))
 
-@client.event
-async def on_message(message):
+#Let this command be run by people with the Testers role only.	
+@client.command()
+@commands.has_role('Testers')
+async def strat(ctx, ,*args):
+	#Not sure why this is global but I kept it because who knows.
 	global stratDatabase
-	messageStr = message.content
-	messageStr = messageStr.lower()
-
-	if message.author == client.user:
-		return
-
-
-	if message.content.startswith("!strat"): #Checking if strat
-		stratDatabase = update_if_needed(stratDatabase)
-		validNum = False
-		if attacker(messageStr):   #Checking if Attacker
-			if cstore(messageStr):
-				while validNum == False:
-					validNum = randomGen("Attackers","C-Store")
-				await message.channel.send(embed=post(validNum)) #Attacker CS
-				print("att cs")
-				return
-
-			if factory(messageStr):
-				while validNum == False:
-					validNum = randomGen("Attackers","Factory")        		
-				await message.channel.send(embed=post(validNum)) #Attacker Factory
-				print("att fac")
-				return
-
-			if killhouse(messageStr):
-				while validNum == False:
-					validNum = randomGen("Attackers","Killhouse")
-
-				await message.channel.send(embed=post(validNum)) #Attacker Killhouse
-				print("att kh")
-				return
-
-
-
-		if defender(messageStr):   #Checking if Defender
-			if cstore(messageStr):
-				while validNum == False:
-					validNum = randomGen("Defenders","C-store")
-				
-				await message.channel.send(embed=post(validNum)) #Defender CS
-				print("def cs")
-				return
-
-			if factory(messageStr):
-				while validNum == False:
-					validNum = randomGen("Defenders","Factory")
-
-				await message.channel.send(embed=post(validNum)) #Defender Factory
-				print("def fac")
-				return
-
-			if killhouse(messageStr):
-				
-				while validNum == False:
-					validNum = randomGen("Defenders","Killhouse")
-					
-				await message.channel.send(embed=post(validNum)) #Defender Killhouse
-				print("def kh")
-				return
-
+	stratDatabase = update_if_needed(stratDatabase)
+	#I got tired of scrolling. Add your options here
+	team_options_a = ['a','attack','attk','atk','attackers']
+	team_options_d = ['d','defender','def','crim','t']
+	tile_options_c = ['c','cs','cstore','store']
+	tile_options_f = ['factory','f','fac']
+	tile_options_k = ['k','kill','killhouse']
+	teams_merged = team_options_a + team_options_d
+	tiles_merged = tile_options_c + tile_options_f + tile_options_k
+	#No arguments provided. Default to random.
+	if len(args) == 0:
 		validNum = randomGen("Both","All")
-		await message.channel.send(embed=post(validNum))
-		print("general")
+		await ctx.message.send(embed=post(validNum))
+		return
+	
+	#One argument provided, check to see if it's a tile
+	elif len(args) == 1 and args[0].lower() in tiles_merged:
+		tile = args[0].lower()
+		#A bunch of if's to determine what tile should be posted.
+		if tile in tile_options_c:
+			validNum = randomGen('Both',"C-Store")
+			await ctx.send(embed=post(validNum))
+			return
+		if tile in tile_options_f:
+			validNum = randomGen('Both',"Factory")
+			await ctx.send(embed=post(validNum))
+			return
+		if tile in tile_options_k:
+			validNum = randomGen('Both',"Killhouse")
+			await ctx.send(embed=post(validNum))
+			return
 
-
-
-	if message.content.startswith("!help"):
-		await message.channel.send("`!strat [team] [tile set]`. \n You can do just `!strat` for a general strat, or specify both a team and a tileset which can give you a strat for the map or the team.")
+	#Like above, but for teams if this is the only argument passed
+	elif len(args) == 1 and args[0].lower() in teams_merged:
+		team = args[0].lower()
+		if team in team_options_a:
+			validNum = randomGen("Attackers","All")
+			await ctx.send(embed=post(validNum))
+			return
+		else:
+			validNum = randomGen("Defenders","All")
+			await ctx.send(embed=post(validNum))
+			return
 		
+	#tile was first argument, team was second
+	elif len(args) == 2 and args[0].lower() in tiles_merged and args[1].lower() in teams_merged:
+		tile = args[0].lower()
+		team = args[1].lower()
+		if tile in tile_options_c:
+			if team in team_options_a:
+				validNum = randomGen("Attackers","C-Store")
+				await ctx.send(embed=post(validNum))
+				return
+			else:
+				validNum = randomGen("Defenders","C-Store")
+				await ctx.send(embed=post(validNum))
+				return
+		elif tile in tile_options_f:
+			if team in team_options_a:
+				validNum = randomGen("Attackers","Factory")
+				await ctx.send(embed=post(validNum))
+				return
+			else:
+				validNum = randomGen("Defenders","Factory")
+				await ctx.send(embed=post(validNum))
+				return
+		elif tile in tile_options_k:
+			if team in team_options_a:
+				validNum = randomGen("Attackers","Killhouse")
+				await ctx.send(embed=post(validNum))
+				return
+			else:
+				validNum = randomGen("Defenders","Killhouse")
+				await ctx.send(embed=post(validNum))
+				return
+			
+	#Same as above, but team was the first argument and tile was second
+	elif len(args) == 2 and args[1] in tiles_merged and args[0] in teams_merged:
+		tile = args[1].lower()
+		team = args[0].lower()
+		if tile in tile_options_c:
+			if team in team_options_a:
+				validNum = randomGen("Attackers","C-Store")
+				await ctx.send(embed=post(validNum))
+				return
+			else:
+				validNum = randomGen("Defenders","C-Store")
+				await ctx.send(embed=post(validNum))
+				return
+		elif tile in tile_options_f:
+			if team in team_options_a:
+				validNum = randomGen("Attackers","Factory")
+				await ctx.send(embed=post(validNum))
+				return
+			else:
+				validNum = randomGen("Defenders","Factory")
+				await ctx.send(embed=post(validNum))
+				return
+		elif tile in tile_options_k:
+			if team in team_options_a:
+				validNum = randomGen("Attackers","Killhouse")
+				await ctx.send(embed=post(validNum))
+				return
+			else:
+				validNum = randomGen("Defenders","Killhouse")
+				await ctx.send(embed=post(validNum))
+				return
+	#No need to check to see if the amount of args provided is above 2 since we just wont use them. Also not caring how the list looks when posted.
+	else:
+		await ctx.send("You did not enter valid arguments. Valid arguments for team names are:\n`"+str(teams_merged)+"`\n\nValid arguments for tilesets are:\n`"+str(tiles_merged)+"`")
+	return	
 
 
 def randomGen(team,tileset):
@@ -128,7 +172,7 @@ def randomGen(team,tileset):
 	#return number
 
 def post(number):
-	embed = discord.Embed(title="Title", description=stratDatabase[number][0], color=0x04ddfe)
+	embed = discord.Embed(title="Title (GDOCS)", description=stratDatabase[number][0], color=0x04ddfe)
 	embed.add_field(name="Description", value=stratDatabase[number][1], inline=False)
 	embed.add_field(name="Team", value=stratDatabase[number][2], inline=False)
 	embed.add_field(name="TileSet", value=stratDatabase[number][3], inline=False)
