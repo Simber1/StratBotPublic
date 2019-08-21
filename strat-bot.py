@@ -38,7 +38,7 @@ bind_opts(ATK_KEY, ['a','attack','attk','atk','attackers'])
 bind_opts(DEF_KEY, ['d','defender','def','crim','t'])
 bind_opts(CSTR_KEY, ['c','cs','cstore','store'])
 bind_opts(FAC_KEY, ['factory','f','fac'])
-bind_opts(KILL_KEY, ['k','kill','killhouse'])
+bind_opts(KILL_KEY, ['k','kh','kill','killhouse'])
 
 last_update = datetime.datetime.now()
 def update_if_needed(database):
@@ -56,13 +56,19 @@ def update_if_needed(database):
 async def on_ready():
 	print("We have logged in as {0.user}".format(client))
 
-#Let this command be run by people with the Testers role only.	
 @client.command()
-@commands.has_role('Testers')
 async def strat(ctx,*args):
-	#Not sure why this is global but I kept it because who knows.
+
 	global stratDatabase
 	stratDatabase = update_if_needed(stratDatabase)
+	i = 0
+	while i < len(args):
+		if args[i] == "help":
+			valid_teams = ", ".join("%s: %s" % (key, str(INV_BINDS[key])) for key in TEAM_KEYS)
+			valid_tiles = ", ".join("%s: %s" % (key, str(INV_BINDS[key])) for key in TILE_KEYS)
+			await ctx.send("Bot Made by Simber, CADMonkey and Mailstorm.\n Source is available at https://github.com/Simber1/StratBotPublic.\n Valid arguments for team names are:\n`"+ valid_teams +"`\n\nValid arguments for tilesets are:\n`"+valid_tiles+"`")
+			return
+		i = i + 1
 
 	try:
 		filters = set(ARG_BINDINGS[arg] for arg in args) # Parse the options into filters. A set is used to prevent duplicates
